@@ -1,8 +1,12 @@
-% SPDX-FileCopyrightText: 2021 Xianjun Jiao putaoshu@msn.com
+% SPDX-FileCopyrightText: 2022 Xianjun Jiao putaoshu@msn.com
 % SPDX-License-Identifier: AGPL-3.0-or-later
 
-function [d, wavelength] = ant_array_beam_pattern(freq_hz, array_style, num_ant, ant_spacing_wavelength, angle_vec_degree, beamforming_vec_rad)
+function [d, wavelength, a, gain_at_direction_total] = ant_array_beam_pattern(freq_hz, array_style, num_ant, ant_spacing_wavelength, angle_vec_degree, beamforming_vec_rad, no_plot_flag)
 c = 299792458;
+
+if exist('no_plot_flag', 'var')==0 || isempty(no_plot_flag)
+  no_plot_flag = 0;
+end
 
 if exist('angle_vec_degree', 'var')==0 || isempty(angle_vec_degree)
   angle_vec_degree = 0:0.001:360;
@@ -82,9 +86,14 @@ signal_rx_at_direction_total = sqrt(1/num_ant).*exp((d./wavelength).*2.*pi.*1i)*
 gain_at_direction_total = abs(signal_rx_at_direction_total).^2;
 % gain_db_at_direction_total = 10.*log10(gain_at_direction_total);
 
+if no_plot_flag == 1
+    return;
+end
+
 %Plot
 % figure; 
-max_gain = max(gain_at_direction_total);
+% max_gain = max(gain_at_direction_total);
+max_gain = num_ant;
 if abs(ceil(max_gain) - max_gain) < 0.1
   max_r = ceil(max_gain) + 1;
 else

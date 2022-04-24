@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021 Xianjun Jiao putaoshu@msn.com
+# SPDX-FileCopyrightText: 2022 Xianjun Jiao putaoshu@msn.com
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 import numpy as np
@@ -96,15 +96,15 @@ def ant_gen(array_style = None,num_ant = None,ant_spacing_m = None):
 # print(ant_x_set)
 # print(ant_y_set)
 
-def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, ant_spacing_wavelength = None, angle_vec_degree = None, plot_in_polar = None, beamforming_vec_rad = None, pause_interval = None): 
+def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, ant_spacing_wavelength = None, angle_vec_degree = None, plot_in_polar = None, beamforming_vec_rad = None, pause_interval = None, no_plot_flag = None): 
     c = 299792458
     
-    print(freq_hz, array_style, num_ant, ant_spacing_wavelength, angle_vec_degree, plot_in_polar, beamforming_vec_rad, pause_interval)
-
     if angle_vec_degree is None:
         angle_vec_degree = 360*np.arange(0, 1, 0.001)
     
     angle_vec_degree = np.array([angle_vec_degree]).T
+
+    print(freq_hz, array_style, num_ant, ant_spacing_wavelength, len(angle_vec_degree), plot_in_polar, beamforming_vec_rad, pause_interval)
 
     if freq_hz is None:
         freq_hz = 2450000000
@@ -120,6 +120,9 @@ def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, a
     
     if beamforming_vec_rad is None:
         beamforming_vec_rad = np.zeros((1, num_ant))
+    
+    if no_plot_flag is None:
+        no_plot_flag = False
     
     wavelength = c / freq_hz
     if array_style.lower() != 'customized':
@@ -167,6 +170,9 @@ def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, a
     signal_rx_at_direction_total = np.sqrt(1 / num_ant)*np.matmul(np.exp((d/wavelength)*2*np.pi*1j), beamforming_vec)
     gain_at_direction_total = np.abs(signal_rx_at_direction_total) ** 2
     
+    if no_plot_flag is True:
+        return d, wavelength, a, gain_at_direction_total
+
     #Plot
     fig = plt.figure(0)
     fig.clf()
@@ -213,7 +219,7 @@ def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, a
     else:
         plt.show()
 
-    return d, wavelength
+    return d, wavelength, a, gain_at_direction_total
 
 # ant_array_beam_pattern(freq_hz=2450e6, array_style='linear', num_ant=3, ant_spacing_wavelength=0.5)
 # ant_array_beam_pattern(freq_hz=2450e6, array_style='customized', num_ant=3, ant_spacing_wavelength=np.array([[0.1, 0.2], [-0.3, 0.4], [-0.5, -0.6]]))
