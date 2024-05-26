@@ -218,6 +218,8 @@ def ant_array_beam_pattern(freq_hz = None, array_style = None, num_ant = None, a
         plt.pause(pause_interval)
     else:
         plt.show()
+    
+    # plt.savefig(str(beamforming_vec_rad[-1])+'.png')
 
     return d, wavelength, a, gain_at_direction_total
 
